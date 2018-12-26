@@ -21,7 +21,7 @@
                     {
                         "tableID":1,
                         "tableName": "Table 1",
-                        "customerName": "Иван Велинов",
+                        "customerName": "Ivan Velinov",
                         "phoneNumber": "078/471-747",
                         "PersonNum": "4",
                         "date": "25/12/2018",
