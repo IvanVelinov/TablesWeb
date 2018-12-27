@@ -68,4 +68,3 @@ C:\Users\Ivan\source\repos\TablesWeb\TablesWeb\obj\Debug\TablesWeb.csproj.CoreCo
 C:\Users\Ivan\source\repos\TablesWeb\TablesWeb\obj\Debug\TablesWeb.csproj.CopyComplete
 C:\Users\Ivan\source\repos\TablesWeb\TablesWeb\obj\Debug\TablesWeb.dll
 C:\Users\Ivan\source\repos\TablesWeb\TablesWeb\obj\Debug\TablesWeb.pdb
-C:\Users\Ivan\source\repos\TablesWeb\TablesWeb\obj\Debug\TablesWeb.csprojAssemblyReference.cache

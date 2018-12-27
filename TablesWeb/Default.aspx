@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
     <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script src="Scripts/bootstrap.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/css/bootstrap-timepicker.min.css" />
 
@@ -59,38 +58,86 @@
                         "time": "21:00"
                     }
                 ];
+            debugger;
+            //var ID = parseDate (id);
+            //var jsonObj = { "_model":{ "date": '2018/12/27'} }
+            ////var params = JSON.stringify({ date: '27/12/2018'});
+            //$.ajax({
+            //    type: "GET",
+            //    url: "Default.aspx/GetTableBookingsForDate",
+            //    data: JSON.stringify(jsonObj), 
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    success: function (data) {
+                    
+                  
+            //        fillDataTable(data, function (fn) {
+            //            debugger;
+            //        });
+            //    },
+            //    error: function (err) {
+            //        alert(err);
+            //    }
+            //})
 
-            $('#dtTables').dataTable({
-                data: mydata,
-                "columns": [
-                    { 'data': 'tableID' },
-                    { 'data': 'tableName' },
-                    { 'data': 'customerName' },
-                    { 'data': 'phoneNumber' },
-                    { 'data': 'PersonNum' },
-                    { 'data': 'date' },
-                    { 'data': 'time' },
-                    {
-                        mRender: function (data, type, row) {
-                            return '<span class="btn btn-success" id="bookID" data-id="' + row.tableID + '">Book</span>'
-                        }
-                    },
-                    {
-                        mRender: function (data, type, row) {
-                            return '<span class="btn btn-danger" id="unBookID" data-id="' + row.tableID + '">UnBook</a>'
-                        }
-                    }
-                ],
-                "columnDefs": [
-                    {
-                        "targets": [0],
-                        "visible": false,
-                        "searchable": false
-                    }]
-            });
 
-            $('#dtTables').on('click', 'td', function (e) {
-                //e.preventDefault();
+            //$('#dtTables').dataTable({
+            //    data: mydata,
+            //    "columns": [
+            //        { 'data': 'tableID' },
+            //        { 'data': 'tableName' },
+            //        { 'data': 'customerName' },
+            //        { 'data': 'phoneNumber' },
+            //        { 'data': 'PersonNum' },
+            //        { 'data': 'date' },
+            //        { 'data': 'time' },
+            //        {
+            //            mRender: function (data, type, row) {
+            //                return '<span class="btn btn-success" id="bookID" data-id="' + row.tableID + '">Book</span>'
+            //            }
+            //        },
+            //        {
+            //            mRender: function (data, type, row) {
+            //                return '<span class="btn btn-danger" id="unBookID" data-id="' + row.tableID + '">UnBook</a>'
+            //            }
+            //        }
+            //    ],
+            //    "columnDefs": [
+            //        {
+            //            "targets": [0],
+            //            "visible": false,
+            //            "searchable": false
+            //        }]
+            //});
+
+           
+
+            HideModal();
+            
+            initializeDateAndTimePickers();
+            fillDatepickerValue();
+
+            var selectedDate = $("#datepicker").val().toString();
+            $.ajax({
+                type: "GET",
+                url: "Default.aspx/GetTableBookingsForDate",
+                data: {test: selectedDate}, 
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                  
+                    fillDataTable(data, function (fn) {
+                        debugger;
+                    });
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            })
+
+
+             $('#dtTables').on('click', 'td', function (e) {
                 if (e.target.id == "bookID") {
                     ShowModal(e.target.dataset.id);
                 }
@@ -99,13 +146,53 @@
                 }
             });
 
-            var dateToday = new Date();
+
+            initializeSaveButtonClick();
+            initializeCloseButtonClick();
+           
+        });
+
+        function fillDataTable(data, fn) {
+            debugger;
+              $('#dtTables').dataTable({
+                        data: data,
+                        "columns": [
+                            { 'data': 'tableID' },
+                            { 'data': 'tableName' },
+                            { 'data': 'customerName' },
+                            { 'data': 'phoneNumber' },
+                            { 'data': 'PersonNum' },
+                            { 'data': 'date' },
+                            { 'data': 'time' },
+                            {
+                                mRender: function (data, type, row) {
+                                    return '<span class="btn btn-success" id="bookID" data-id="' + row.tableID + '">Book</span>'
+                                }
+                            },
+                            {
+                                mRender: function (data, type, row) {
+                                    return '<span class="btn btn-danger" id="unBookID" data-id="' + row.tableID + '">UnBook</a>'
+                                }
+                            }
+                        ],
+                        "columnDefs": [
+                            {
+                                "targets": [0],
+                                "visible": false,
+                                "searchable": false
+                            }]
+            });
+            if (fn) return fn;
+        }
+
+        function initializeDateAndTimePickers() {
             $("#datepicker").datepicker({
-                showButtonPanel: true,                 
-                minDate:new Date()
+                showButtonPanel: true
+                //,minDate: new Date()
             });
             $("#dateModal").datepicker({
-                showButtonPanel: true
+                showButtonPanel: true,
+                minDate: new Date()
             });
 
             $('#timepicker5').timepicker({
@@ -115,8 +202,19 @@
                 showMeridian: false
             });
 
-            HideModal();
-        });
+        }
+
+        function initializeSaveButtonClick() {
+            $("#SaveBooking").click(function () {
+                alert("Handler for Save.click() called.");
+            });
+        };
+
+        function initializeCloseButtonClick() {
+            $("#CloseBooking").click(function () {
+                alert("Handler for Close.click() called.");
+            });
+        };
 
         function HideModal() {
             $('#NewBookModal').modal('hide');
@@ -128,11 +226,16 @@
             $('#NewBookModal').modal('show');
         };
 
+        function fillDatepickerValue() {
+            $('#datepicker').val(getTodayDate())
+        }
+
         function getTodayDate() {
             var d = new Date();
             var date = (d.getMonth() + 1) + "/" + + d.getDate() + "/" + (d.getFullYear());
             return date;
         };
+
     </script>
 
 
@@ -175,39 +278,60 @@
                         <h4 class="modal-title">Book Table</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="row input">
                             <input id="rowId" type="hidden" style="visibility: hidden" />
                         </div>
                         <div class="row">
-                            <label for="customerNameModal">Customer Name</label>
-                            <input type="text" id="customerNameModal" />
+                            <div class="left">
+                                <label for="customerNameModal">Customer Name</label>
+                            </div>
+                            <div class="left">
+                                <input type="text" id="customerNameModal" />
+                            </div>
+
                         </div>
                         <div class="row">
-                            <label for="phoneNumberModal">Phone Number</label>
-                            <input type="text" id="phoneNumberModal" />
+                            <div class="left">
+                                <label for="phoneNumberModal">Phone Number</label>
+                            </div>
+                            <div class="left">
+                                <input type="text" id="phoneNumberModal" />
+                            </div>
                         </div>
                         <div class="row">
-                            <label for="personModal">No. Persons</label>
-                            <input type="number" id="personModal" max="20" min="1" />
+                            <div class="left">
+                                <label for="personModal">No. Persons</label>
+                            </div>
+                            <div class="left">
+                                <input type="number" id="personModal" />
+                            </div>
                         </div>
                         <div class="row">
-                            <label for="dateModal">Date</label>
-                            <input type="text" id="dateModal" />
+                            <div class="left">
+                                <label for="dateModal">Date</label>
+                            </div>
+                            <div class="left">
+                                <input type="text" id="dateModal" />
+                            </div>
                         </div>
-                        <div class="row input-group bootstrap-timepicker timepicker">                            
-                            <div class="bootstrap-timepicker">
+                        <div class="row">
+                            <div class="left">
                                 <label for="timepicker">Time</label>
+                            </div>
+                            <div class="left">
                                 <input id="timepicker5" type="text" class="input-small">
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" id="SaveTable" class="btn btn-primary">Save</button>
+                        <button type="button" id="CloseBooking" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" id="SaveBooking" class="btn btn-primary">Save</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
 </asp:Content>
