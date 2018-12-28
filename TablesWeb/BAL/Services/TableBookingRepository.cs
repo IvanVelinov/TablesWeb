@@ -9,7 +9,7 @@ namespace TablesWeb.BAL.Services
 {
     public class TableBookingRepository : ITableBookingRepository
     {
-        public List<BookingTablesModel> GetTableBookingsForDate(BookingTablesModel table)
+        public List<BookingTablesModel> GetTableBookingsForDate(DateTime _selectedDate)
         {
             List<BookingTablesModel> bookings = new List<BookingTablesModel>
             {
@@ -20,9 +20,9 @@ namespace TablesWeb.BAL.Services
                     customerName = "Ivan Velinov",
                     phoneNumber = "078471747",
                     PersonNum = 4,
-                    date = DateTime.Now.Date,
-                    time = DateTime.Now
-                }, 
+                     date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
+                    time = DateTime.Now.ToString("HH:mm")
+                },
 
                 new BookingTablesModel
                 {
@@ -31,19 +31,18 @@ namespace TablesWeb.BAL.Services
                     customerName = "",
                     phoneNumber = "",
                     PersonNum = null,
-                    date =null,
-                    time = null
+                     date ="",
+                    time = ""
                 },
-
                 new BookingTablesModel
                 {
-                     tableID = 3,
+                    tableID = 3,
                     tableName = "Table 3",
                     customerName = "Trajce",
                     phoneNumber = "078/471-748",
                     PersonNum = 6,
-                    date =DateTime.Now.Date,
-                    time = DateTime.Now
+                    date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
+                    time = DateTime.Now.ToString("HH:mm")
                 },
 
                 new BookingTablesModel
@@ -53,8 +52,8 @@ namespace TablesWeb.BAL.Services
                     customerName = "Slavco",
                     phoneNumber = "078/471-749",
                     PersonNum = 4,
-                    date =DateTime.Now.Date,
-                    time = DateTime.Now
+                    date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
+                    time = DateTime.Now.ToString("HH:mm")
                 }
             };
 

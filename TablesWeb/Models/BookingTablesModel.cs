@@ -12,7 +12,7 @@ namespace TablesWeb.Models
         public string customerName { get; set; }
         public string phoneNumber { get; set; }
         public int? PersonNum { get; set; }
-        public DateTime? date { get; set; }
-        public DateTime? time { get; set; }                     
+        public string date { get; set; }
+        public string time { get; set; }                     
     }
 }

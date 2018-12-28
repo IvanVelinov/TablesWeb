@@ -9,6 +9,6 @@ namespace TablesWeb.BAL.Repository
 {
     public interface ITableBookingRepository
     {
-        List<BookingTablesModel> GetTableBookingsForDate(BookingTablesModel table);
+        List<BookingTablesModel> GetTableBookingsForDate(DateTime _selectedDate);
     }
 }

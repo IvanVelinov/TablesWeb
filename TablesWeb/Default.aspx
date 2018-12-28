@@ -19,125 +19,13 @@
 
     <script>
         $(document).ready(function () {
-            var mydata =
-                [
-                    {
-                        "tableID": 1,
-                        "tableName": "Table 1",
-                        "customerName": "Ivan Velinov",
-                        "phoneNumber": "078/471-747",
-                        "PersonNum": "4",
-                        "date": "25/12/2018",
-                        "time": "21:00"
-                    },
-                    {
-                        "tableID": 2,
-                        "tableName": "Table 2",
-                        "customerName": "",
-                        "phoneNumber": "",
-                        "PersonNum": "",
-                        "date": "",
-                        "time": ""
-                    },
-                    {
-                        "tableID": 3,
-                        "tableName": "Table 3",
-                        "customerName": "Trajce",
-                        "phoneNumber": "078/471-748",
-                        "PersonNum": "6",
-                        "date": "25/12/2018",
-                        "time": "18:00"
-                    },
-                    {
-                        "tableID": 4,
-                        "tableName": "Table 4",
-                        "customerName": "Slavco",
-                        "phoneNumber": "078/471-749",
-                        "PersonNum": "4",
-                        "date": "25/12/2018",
-                        "time": "21:00"
-                    }
-                ];
-            debugger;
-            //var ID = parseDate (id);
-            //var jsonObj = { "_model":{ "date": '2018/12/27'} }
-            ////var params = JSON.stringify({ date: '27/12/2018'});
-            //$.ajax({
-            //    type: "GET",
-            //    url: "Default.aspx/GetTableBookingsForDate",
-            //    data: JSON.stringify(jsonObj), 
-            //    contentType: "application/json; charset=utf-8",
-            //    dataType: "json",
-            //    success: function (data) {
-                    
-                  
-            //        fillDataTable(data, function (fn) {
-            //            debugger;
-            //        });
-            //    },
-            //    error: function (err) {
-            //        alert(err);
-            //    }
-            //})
-
-
-            //$('#dtTables').dataTable({
-            //    data: mydata,
-            //    "columns": [
-            //        { 'data': 'tableID' },
-            //        { 'data': 'tableName' },
-            //        { 'data': 'customerName' },
-            //        { 'data': 'phoneNumber' },
-            //        { 'data': 'PersonNum' },
-            //        { 'data': 'date' },
-            //        { 'data': 'time' },
-            //        {
-            //            mRender: function (data, type, row) {
-            //                return '<span class="btn btn-success" id="bookID" data-id="' + row.tableID + '">Book</span>'
-            //            }
-            //        },
-            //        {
-            //            mRender: function (data, type, row) {
-            //                return '<span class="btn btn-danger" id="unBookID" data-id="' + row.tableID + '">UnBook</a>'
-            //            }
-            //        }
-            //    ],
-            //    "columnDefs": [
-            //        {
-            //            "targets": [0],
-            //            "visible": false,
-            //            "searchable": false
-            //        }]
-            //});
-
            
-
             HideModal();
-            
             initializeDateAndTimePickers();
             fillDatepickerValue();
-
-            var selectedDate = $("#datepicker").val().toString();
-            $.ajax({
-                type: "GET",
-                url: "Default.aspx/GetTableBookingsForDate",
-                data: {test: selectedDate}, 
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (data) {
-                    debugger;
-                  
-                    fillDataTable(data, function (fn) {
-                        debugger;
-                    });
-                },
-                error: function (err) {
-                    alert(err);
-                }
-            })
-
-
-             $('#dtTables').on('click', 'td', function (e) {
+            CallAjaxToFillDataTable();          
+          
+            $('#dtTables').on('click', 'td', function (e) {
                 if (e.target.id == "bookID") {
                     ShowModal(e.target.dataset.id);
                 }
@@ -149,40 +37,56 @@
 
             initializeSaveButtonClick();
             initializeCloseButtonClick();
-           
+
         });
 
-        function fillDataTable(data, fn) {
-            debugger;
-              $('#dtTables').dataTable({
-                        data: data,
-                        "columns": [
-                            { 'data': 'tableID' },
-                            { 'data': 'tableName' },
-                            { 'data': 'customerName' },
-                            { 'data': 'phoneNumber' },
-                            { 'data': 'PersonNum' },
-                            { 'data': 'date' },
-                            { 'data': 'time' },
-                            {
-                                mRender: function (data, type, row) {
-                                    return '<span class="btn btn-success" id="bookID" data-id="' + row.tableID + '">Book</span>'
-                                }
-                            },
-                            {
-                                mRender: function (data, type, row) {
-                                    return '<span class="btn btn-danger" id="unBookID" data-id="' + row.tableID + '">UnBook</a>'
-                                }
-                            }
-                        ],
-                        "columnDefs": [
-                            {
-                                "targets": [0],
-                                "visible": false,
-                                "searchable": false
-                            }]
+        function CallAjaxToFillDataTable(){
+            $.ajax({
+                type: "GET",
+                data: { testing: JSON.stringify($("#datepicker").val()) },
+                url: "Default.aspx/GetTableBookingsForDate",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    fillDataTable(data.d);
+                },
+                error: function (err) {
+                    debugger;
+                    alert(err);
+                }
             });
-            if (fn) return fn;
+        };
+
+        function fillDataTable(data) {            
+            $('#dtTables').dataTable({
+                data: jQuery.parseJSON(data),
+                "columns": [
+                    { 'data': 'tableID' },
+                    { 'data': 'tableName' },
+                    { 'data': 'customerName' },
+                    { 'data': 'phoneNumber' },
+                    { 'data': 'PersonNum' },
+                    { 'data': 'date' },
+                    { 'data': 'time' },
+                    {
+                        mRender: function (data, type, row) {
+                            return '<span class="btn btn-success" id="bookID" data-id="' + row.tableID + '">Book</span>'
+                        }
+                    },
+                    {
+                        mRender: function (data, type, row) {
+                            return '<span class="btn btn-danger" id="unBookID" data-id="' + row.tableID + '">UnBook</a>'
+                        }
+                    }
+                ],
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": true,
+                        "searchable": false
+                    }
+                ]
+            });
         }
 
         function initializeDateAndTimePickers() {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -19,15 +20,14 @@ namespace TablesWeb
         }
 
         [WebMethod]
-        [ScriptMethod(UseHttpGet = true)]
-        public static string GetTableBookingsForDate(string test)
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json, UseHttpGet = true)]
+        public static string GetTableBookingsForDate(string testing)
         {
-            //BookingTablesModel _model
+            DateTime dateTime10 = Convert.ToDateTime(testing);
             TableBookingRepository bookings = new TableBookingRepository();
-
-            //List<BookingTablesModel> model = bookings.GetTableBookingsForDate(_model);
-
-            return "";
+            List<BookingTablesModel> model = bookings.GetTableBookingsForDate(dateTime10);   
+            
+            return JsonConvert.SerializeObject(model);
         }
     }
 }
