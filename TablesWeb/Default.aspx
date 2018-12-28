@@ -19,28 +19,18 @@
 
     <script>
         $(document).ready(function () {
-           
             HideModal();
             initializeDateAndTimePickers();
             fillDatepickerValue();
-            CallAjaxToFillDataTable();          
-          
-            $('#dtTables').on('click', 'td', function (e) {
-                if (e.target.id == "bookID") {
-                    ShowModal(e.target.dataset.id);
-                }
-                else if (e.target.id == "unBookID") {
-                    alert("Un Book table with Id: " + e.target.dataset.id)
-                }
-            });
-
-
+            CallAjaxToFillDataTable();
+            initializeDatatableButtonClick();
             initializeSaveButtonClick();
             initializeCloseButtonClick();
+            initializeDiscardYesButtonClick();
 
         });
 
-        function CallAjaxToFillDataTable(){
+        function CallAjaxToFillDataTable() {
             $.ajax({
                 type: "GET",
                 data: { testing: JSON.stringify($("#datepicker").val()) },
@@ -51,13 +41,12 @@
                     fillDataTable(data.d);
                 },
                 error: function (err) {
-                    debugger;
                     alert(err);
                 }
             });
         };
 
-        function fillDataTable(data) {            
+        function fillDataTable(data) {
             $('#dtTables').dataTable({
                 data: jQuery.parseJSON(data),
                 "columns": [
@@ -82,7 +71,7 @@
                 "columnDefs": [
                     {
                         "targets": [0],
-                        "visible": true,
+                        "visible": false,
                         "searchable": false
                     }
                 ]
@@ -120,14 +109,36 @@
             });
         };
 
+        function initializeDiscardYesButtonClick() {
+            $("#DiscardBooking").click(function () {
+                alert("Handler for Discard.click() called.");
+            });
+        };
+
+        function initializeDatatableButtonClick() {
+            $('#dtTables').on('click', 'td', function (e) {
+                if (e.target.id == "bookID") {
+                    ShowBookTableModal(e.target.dataset.id);
+                }
+                else if (e.target.id == "unBookID") {
+                    ShowDiscardTableModal(e.target.dataset.id);
+                }
+            });
+        };
+
         function HideModal() {
             $('#NewBookModal').modal('hide');
         };
 
-        function ShowModal(tableID) {
+        function ShowBookTableModal(tableID) {
             $('#rowId').val(tableID);
             $('#dateModal').val(getTodayDate())
             $('#NewBookModal').modal('show');
+        };
+
+        function ShowDiscardTableModal(tableID) {
+            $('#rowId').val(tableID);
+            $('#DiscardBookModal').modal('show');
         };
 
         function fillDatepickerValue() {
@@ -231,6 +242,27 @@
                     <div class="modal-footer">
                         <button type="button" id="CloseBooking" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="button" id="SaveBooking" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="DiscardBookModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Discard Table</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <label style="margin-left: 15px">Are you sure you want to cancel the table?</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" id="DiscardBooking" class="btn btn-primary">Yes</button>
                     </div>
                 </div>
             </div>
