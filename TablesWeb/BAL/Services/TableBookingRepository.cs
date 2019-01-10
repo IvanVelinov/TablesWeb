@@ -20,19 +20,23 @@ namespace TablesWeb.BAL.Services
                     customerName = "Ivan Velinov",
                     phoneNumber = "078471747",
                     PersonNum = 4,
-                     date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
-                    time = DateTime.Now.ToString("HH:mm")
+                    date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
+                    time = DateTime.Now.ToString("HH:mm"),
+                    bookId = 1,
+                    employeeId = 2
                 },
 
                 new BookingTablesModel
                 {
-                     tableID = 2,
+                    tableID = 2,
                     tableName = "Table 2",
                     customerName = "",
                     phoneNumber = "",
                     PersonNum = null,
-                     date ="",
-                    time = ""
+                    date ="",
+                    time = "",
+                    bookId = null,
+                    employeeId = null
                 },
                 new BookingTablesModel
                 {
@@ -42,7 +46,9 @@ namespace TablesWeb.BAL.Services
                     phoneNumber = "078/471-748",
                     PersonNum = 6,
                     date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
-                    time = DateTime.Now.ToString("HH:mm")
+                    time = DateTime.Now.ToString("HH:mm"),
+                    bookId = 3,
+                    employeeId = 2
                 },
 
                 new BookingTablesModel
@@ -53,9 +59,47 @@ namespace TablesWeb.BAL.Services
                     phoneNumber = "078/471-749",
                     PersonNum = 4,
                     date =DateTime.Now.Date.ToString("MM/dd/yyyy"),
-                    time = DateTime.Now.ToString("HH:mm")
+                    time = DateTime.Now.ToString("HH:mm"),
+                    bookId = 4,
+                    employeeId = 2
                 }
             };
+
+            return bookings;
+        }
+
+        public List<BookingTablesModel> UpdateTableBookingsForDate(DateTime _selectedDate, BookingTablesModel _model)
+        {
+            List<BookingTablesModel> bookings = GetTableBookingsForDate(_selectedDate);
+
+            BookingTablesModel booking = bookings.Where(x => x.tableID == _model.tableID).FirstOrDefault();
+
+
+            booking.customerName = _model.customerName;
+            booking.phoneNumber = _model.phoneNumber;
+            booking.PersonNum = _model.PersonNum;
+            booking.date = _model.date;
+            booking.time = _model.time;
+            booking.bookId = 4;
+            booking.employeeId = 6;
+
+            return bookings;
+        }
+
+        public List<BookingTablesModel> UnBookTableBookingsForDate(DateTime _selectedDate, BookingTablesModel _model)
+        {
+            List<BookingTablesModel> bookings = GetTableBookingsForDate(_selectedDate);
+
+            BookingTablesModel booking = bookings.Where(x => x.tableID == _model.tableID).FirstOrDefault();
+
+
+            booking.customerName = "";
+            booking.phoneNumber = "";
+            booking.PersonNum = null;
+            booking.date = "";
+            booking.time = "";
+            booking.bookId = null;
+            booking.employeeId = null;
 
             return bookings;
         }

@@ -19,7 +19,7 @@
 
     <script>
         $(document).ready(function () {
-            HideModal();
+            HideModalNewBookModal();
             initializeDateAndTimePickers();
             fillDatepickerValue();
             CallAjaxToFillDataTable();
@@ -46,11 +46,75 @@
             });
         };
 
+        function CallAjaxToBookTable() {
+            debugger;
+            var model = {
+                tableID: $('#rowId').val(), bookId: $('#bookId').val(),
+                employeeId: 2, tableName: $('#tableName').val(), customerName: $('#customerNameModal').val(),
+                phoneNumber: $('#phoneNumberModal').val(), PersonNum: $('#personModal').val(), date: $('#dateModal').val(),
+                time: $('#timepicker5').val()
+            };
+
+            $.ajax({
+                type: "POST",
+                data: JSON.stringify({ '_bookTableModel': model }),
+                url: "Default.aspx/Update",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                    fillDataTable(data.d);
+                    //var currentdate = new Date();
+                    //if (model.date == new Date().format("MM/dd/yyyy"))
+                    //    CallAjaxToFillDataTable();
+
+                    HideModalNewBookModal();
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+
+
+        };
+
+        function CallAjaxToUNBookTable() {
+            debugger;
+            var model = {
+                tableID: $('#discardTableID').val()
+            };
+
+            $.ajax({
+                type: "POST",
+                data: JSON.stringify({ '_bookTableModel': model }),
+                url: "Default.aspx/Unbook",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                    fillDataTable(data.d);
+                    //var currentdate = new Date();
+                    //if (model.date == new Date().format("MM/dd/yyyy"))
+                    //    CallAjaxToFillDataTable();
+
+                    HideDiscardBookModal();
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
+
+
+        };
+
         function fillDataTable(data) {
+            $('#dtTables').dataTable().fnDestroy();
             $('#dtTables').dataTable({
                 data: jQuery.parseJSON(data),
                 "columns": [
                     { 'data': 'tableID' },
+                    { 'data': 'bookId' },
+                    { 'data': 'employeeId' },
                     { 'data': 'tableName' },
                     { 'data': 'customerName' },
                     { 'data': 'phoneNumber' },
@@ -99,7 +163,10 @@
 
         function initializeSaveButtonClick() {
             $("#SaveBooking").click(function () {
-                alert("Handler for Save.click() called.");
+                debugger;
+                if (CheckValidPhoneNumber()) {
+                    CallAjaxToBookTable();
+                }
             });
         };
 
@@ -111,14 +178,16 @@
 
         function initializeDiscardYesButtonClick() {
             $("#DiscardBooking").click(function () {
-                alert("Handler for Discard.click() called.");
+                CallAjaxToUNBookTable();
             });
         };
 
         function initializeDatatableButtonClick() {
-            $('#dtTables').on('click', 'td', function (e) {
+            $('#dtTables').on('click', 'tr', function (e) {
+                var row = $('#dtTables').DataTable().row(this).data();
+
                 if (e.target.id == "bookID") {
-                    ShowBookTableModal(e.target.dataset.id);
+                    ShowBookTableModal(row);
                 }
                 else if (e.target.id == "unBookID") {
                     ShowDiscardTableModal(e.target.dataset.id);
@@ -126,18 +195,32 @@
             });
         };
 
-        function HideModal() {
+        function HideModalNewBookModal() {
             $('#NewBookModal').modal('hide');
         };
 
-        function ShowBookTableModal(tableID) {
-            $('#rowId').val(tableID);
-            $('#dateModal').val(getTodayDate())
+        function HideDiscardBookModal() {
+           $('#DiscardBookModal').modal('hide');
+        };
+
+        function ShowBookTableModal(row) {
+            $('#rowId').val(row.tableID);
+            $('#tableName').val(row.tableName);
+            if (row.bookId == null)
+                $('#dateModal').val(getTodayDate())
+            else {
+                $('#bookId').val(row.bookId);
+                $('#customerNameModal').val(row.customerName);
+                $('#phoneNumberModal').val(row.phoneNumber);
+                $('#personModal').val(row.PersonNum);
+                $('#dateModal').val(row.date)
+                $('#timepickers5').timepicker('setTime', row.time);
+            }
             $('#NewBookModal').modal('show');
         };
 
         function ShowDiscardTableModal(tableID) {
-            $('#rowId').val(tableID);
+            $('#discardTableID').val(tableID);
             $('#DiscardBookModal').modal('show');
         };
 
@@ -150,6 +233,24 @@
             var date = (d.getMonth() + 1) + "/" + + d.getDate() + "/" + (d.getFullYear());
             return date;
         };
+
+
+        function CheckValidPhoneNumber() {
+            var ret = true;
+            var phone = $('#phoneNumberModal').val(),
+                intRegex = /[0-9 -()+]+$/;
+
+            if ((phone.length < 6) || (!intRegex.test(phone))) {
+                alert('Please enter a valid phone number.');
+                ret = false;
+            }
+
+            return ret;
+        };
+         //$("#SaveBooking").click(function () {
+         //       debugger;
+         //       CallAjaxToBookTable();
+         //   });
 
     </script>
 
@@ -169,6 +270,8 @@
                         <thead>
                             <tr>
                                 <th data-field="tableID">tableID</th>
+                                <th data-field="bookId">bookId</th>
+                                <th data-field="employeeId">employeeId</th>
                                 <th data-field="tableName">Tables</th>
                                 <th data-field="customerName">Customer Name</th>
                                 <th data-field="phoneNumber">Phone Number</th>
@@ -195,6 +298,8 @@
                     <div class="modal-body">
                         <div class="row input">
                             <input id="rowId" type="hidden" style="visibility: hidden" />
+                            <input id="tableName" type="hidden" style="visibility: hidden" />
+                            <input id="bookId" type="hidden" style="visibility: hidden" />
                         </div>
                         <div class="row">
                             <div class="left">
@@ -255,7 +360,9 @@
                         <h4 class="modal-title">Discard Table</h4>
                     </div>
                     <div class="modal-body">
-
+                         <div class="row input">
+                            <input id="discardTableID" type="hidden" style="visibility: hidden" />                            
+                        </div>
                         <div class="row">
                             <label style="margin-left: 15px">Are you sure you want to cancel the table?</label>
                         </div>

@@ -29,5 +29,29 @@ namespace TablesWeb
             
             return JsonConvert.SerializeObject(model);
         }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public static string Update(BookingTablesModel _bookTableModel)
+        {
+           
+            DateTime dateTime10 = Convert.ToDateTime(_bookTableModel.date);
+            TableBookingRepository bookings = new TableBookingRepository();
+            List<BookingTablesModel> model  = bookings.UpdateTableBookingsForDate(dateTime10, _bookTableModel);
+
+            return JsonConvert.SerializeObject(model);
+        }
+
+        [WebMethod]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        public static string Unbook(BookingTablesModel _bookTableModel)
+        {
+
+            DateTime dateTime10 = Convert.ToDateTime(_bookTableModel.date);
+            TableBookingRepository bookings = new TableBookingRepository();
+            List<BookingTablesModel> model = bookings.UnBookTableBookingsForDate(dateTime10, _bookTableModel);
+
+            return JsonConvert.SerializeObject(model);
+        }
     }
 }
